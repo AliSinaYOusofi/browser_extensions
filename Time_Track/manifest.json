@@ -1,0 +1,25 @@
+{
+    "name": "timeTrack",
+    "version": "0.0.0.1",
+    "description": "record the time you spend on a website",
+
+    "icons": {
+        "16": "",
+        "32": "",
+        "48": "",
+        "128": ""
+    },
+
+    "permissions": ["activeTab"],
+
+    "content_scripts": [
+        {
+            "js": ["scripts/content_script.js"],
+            "matches": ["*://*/*"]
+        }
+    ],
+
+    "action": {
+        "default_popup": "html/popup.html"
+    }
+}
