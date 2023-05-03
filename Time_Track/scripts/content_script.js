@@ -1,63 +1,84 @@
-let timeTrack = document.createElement("div");
-timeTrack.classList.add("time-track");
-let isDragging = false;
-let dragStartX = 0;
-let dragStartY = 0;
+let timeTrackContainer = document.createElement("div");
+
+
+timeTrackContainer.innerHTML = `
+    <p> </p>
+    <span class="close-icon">❌</span>
+    <span class="minimize-icon">⮘</span>
+    <span class="maximize-icon">⮚</span>
+    <span class="reset-timer-icon">↺</span>
+`;
+
+timeTrackContainer.classList.add("time-track");
+
+let timeTrackText = timeTrackContainer.querySelector("p");
+let closeIcon = timeTrackContainer.querySelector(".close-icon");
+let minimizeIcon = timeTrackContainer.querySelector(".minimize-icon");
+let maximizeIcon = timeTrackContainer.querySelector(".maximize-icon");
+let resetTimerIcon = timeTrackContainer.querySelector(".reset-timer-icon");
+
+let startPosX = 0;
+let startPosY = 0;
 let offsetX = 0;
 let offsetY = 0;
 
-document.body.appendChild(timeTrack);
+document.body.appendChild(timeTrackContainer);
 
+let timerInterval;
 
-let time = 0;
+let startTime = Date.now();
 
 function incrementTime() {
-    time++;
-    updateTimeDisplay();
+    let currentTime = Date.now();
+    let timeDiff = currentTime - startTime;
+    let timeSeconds = Math.floor(timeDiff / 1000);
+    let timeString = formatTime(timeSeconds);
+  
+    updateTimeDisplay(timeString);
 }
 
-function formatTime() {
-
+function formatTime(time) {
     let seconds = time % 60;
     let minutes = Math.floor(time / 60) % 60;
     let hours = Math.floor(time / 3600);
-    
+
     seconds = (seconds < 10 ? "0" : "") + seconds;
     minutes = (minutes < 10 ? "0" : "") + minutes;
-    
-    return (hours > 0) ? hours + ":" + minutes + ":" + seconds : minutes + ":" + seconds;
 
+    return hours > 0 ? hours + ":" + minutes + ":" + seconds : minutes + ":" + seconds;
 }
 
+function resetTimer() {
+    clearInterval(timerInterval);
+    startTime = Date.now();
+    updateTimeDisplay("00:00");
+    timerInterval = setInterval(incrementTime, 1000);
+}
 
-setInterval(function() {
-    let currentUrl = window.location.href;
-  
-  
-    let currentTime = formatTime();
-  
+let currentLocation = window.location.href;
 
-    localStorage.setItem(currentUrl, currentTime);
-}, 1000);
+function handleLocationChange() {
+    if (window.location.href !== currentLocation) {
+        resetTimer();
+        currentLocation = window.location.href;
+    }
+}
 
-setInterval(incrementTime, 1000);
+setInterval(handleLocationChange, 1000);
+
+timerInterval = setInterval(incrementTime, 1000);
 
 function getTimeSpent() {
-    let currentUrl = window.location.href;
-    let timeSpent = localStorage.getItem(currentUrl);
-  
+    let timeSpent = localStorage.getItem(currentLocation);
+
     if (timeSpent) return timeSpent;
-    
+
     return "00:00";
-    
 }
 
-function updateTimeDisplay() {
-    
-    var timeSpent = getTimeSpent();
-
+function updateTimeDisplay(timeSpent) {
     const styles = `
-        .time_track {
+        .time-track {
             position: fixed;
             z-index: 9999;
             top: 12%;
@@ -74,6 +95,11 @@ function updateTimeDisplay() {
             white-space: nowrap;
             width: fit;
             cursor: grab;
+            display: flex;
+            flex-flow: row wrap;
+            align-items: center;
+            justify-content: center;
+            row-gap: 5px;
             transition: transform 0.2s ease-in-out;
             background: linear-gradient(to bottom right, rgba(255,255,255,0.15), rgba(0,0,0,0.05));
             backdrop-filter: blur(10px);
@@ -86,44 +112,61 @@ function updateTimeDisplay() {
     `;
 
     const styleTag = document.createElement("style");
-    
+
     styleTag.textContent = styles;
     document.head.insertAdjacentElement("beforeend", styleTag);
-    timeTrack.innerHTML = "Time spent on this website: " + timeSpent;
-    timeTrack.classList.add("time_track")
+    
+    timeTrackText.textContent = timeSpent;
+    closeIcon.textContent = '❌';
+    minimizeIcon.textContent = '⮘';
+    maximizeIcon.textContent = '⮚'
+    resetTimerIcon.textContent = '↺';
+    
+    closeIcon.style.fontSize = '20px';
+    minimizeIcon.style.fontSize = '28px';
+    maximizeIcon.style.fontSize = '28px'
+    resetTimerIcon.style.fontSize = '28px'
+    resetTimerIcon.style.cursor = 'pointer';
 
-    timeTrack.addEventListener('mousedown', handleMouseDown);
-    timeTrack.addEventListener('mousemove', handleMouseMove);
-    timeTrack.addEventListener('mouseup', handleMouseUp);
+    timeTrackContainer.classList.add("time-track");
+    
+    timeTrackContainer.addEventListener("mousedown", startDrag);
+    resetTimerIcon.addEventListener("click", resetTimerOnClick)
 }
 
+function resetTimerOnClick() {
+    resetTimer()
+}
+// functions for dragging the div.
 function handleMouseDown(event) {
     event.preventDefault();
     isDragging = true;
     dragStartX = event.clientX;
     dragStartY = event.clientY;
-    const { top, left } = timeTrack.getBoundingClientRect();
+    const { top, left } = timeTrackContainer.getBoundingClientRect();
     offsetX = dragStartX - left;
     offsetY = dragStartY - top;
 }
 
-function handleMouseMove(event) {
-    event.preventDefault();
-    if (isDragging) {
-        const x = event.clientX - offsetX;
-        const y = event.clientY - offsetY;
-        timeTrack.style.top = `${y}px`;
-        timeTrack.style.left = `${x}px`;
-    }
+function moveElement(event) {
+    const newX = event.clientX - offsetX;
+    const newY = event.clientY - offsetY;
+
+    timeTrackContainer.style.left = newX + "px";
+    timeTrackContainer.style.top = newY + "px";
 }
 
-function handleMouseUp(event) {
-    event.preventDefault();
-    isDragging = false;
-    timeTrack.removeEventListener("mousedown", handleMouseDown);
+function startDrag(event) {
+    startPosX = timeTrackContainer.offsetLeft;
+    startPosY = timeTrackContainer.offsetTop;
+    offsetX = event.clientX - startPosX;
+    offsetY = event.clientY - startPosY;
+
+    document.addEventListener("mousemove", moveElement);
 }
 
-function removeEventListern() {
-    
+function stopDrag() {
+    document.removeEventListener("mousemove", moveElement);
 }
 
+document.addEventListener("mouseup", stopDrag);
