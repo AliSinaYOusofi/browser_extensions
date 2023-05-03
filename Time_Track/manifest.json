@@ -16,7 +16,8 @@
     "content_scripts": [
         {
             "js": ["./scripts/content_script.js"],
-            "matches": ["*://*/*"]
+            "matches": ["*://*/*"],
+            "resources": ["./scripts/tracker_main.html"]
         }
     ],
 
