@@ -3,7 +3,7 @@ let timeTrackContainer = document.createElement("div");
 timeTrackContainer.innerHTML = `
     <p> </p>
 
-    <span class="minimize-icon eye">
+    <span class="minimize-icon">
         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
             <path stroke-linecap="round" stroke-linejoin="round" d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178z" />
             <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
@@ -17,7 +17,7 @@ timeTrackContainer.innerHTML = `
         </svg>
     </span>
 
-    <span class='theme'>
+    <span class='theme '>
         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
             <path stroke-linecap="round" stroke-linejoin="round" d="M12 3v2.25m6.364.386l-1.591 1.591M21 12h-2.25m-.386 6.364l-1.591-1.591M12 18.75V21m-4.773-4.227l-1.591 1.591M5.25 12H3m4.227-4.773L5.636 5.636M15.75 12a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0z" />
         </svg>
@@ -65,7 +65,7 @@ function formatTime(time) {
 }
 
 function resetTimer() {
-    
+    saveTimeSpent()
     clearInterval(timerInterval);
     startTime = Date.now();
     updateTimeDisplay("00:00");
@@ -78,6 +78,7 @@ let currentLocation = window.location.href;
 function handleLocationChange() {
     
     if (window.location.href !== currentLocation) {
+        saveTimeSpent()
         resetTimer();
         currentLocation = window.location.href;
     }
@@ -135,6 +136,7 @@ function updateTimeDisplay(timeSpent) {
         .light {
             background: white;
             color: black;
+            opacity: 1;
         }
 
         .dark {
@@ -154,9 +156,9 @@ function updateTimeDisplay(timeSpent) {
     hideUnhideElements.style.cursor = 'pointer';
     theme.style.cursor = 'pointer';
 
-    resetTimerIcon.style.width  = '1.5rem';
-    hideUnhideElements.style.width  = '1.5rem';
-    theme.style.width  = '1.5rem';
+    resetTimerIcon.style.width  = '25px';
+    hideUnhideElements.style.width  = '25px';
+    theme.style.width  = '25px';
 
     timeTrackContainer.classList.add("time-track");
     
@@ -165,6 +167,16 @@ function updateTimeDisplay(timeSpent) {
     theme.addEventListener("click", changeThemeOnClick);
     hideUnhideElements.addEventListener("click", handleHideUnhideOnClick);
 
+}
+
+function saveTimeSpent() {
+
+    let timeSpent = timeTrackText.textContent;
+    let currentTime = new Date().toLocaleString();
+
+    chrome.runtime.sendMessage({ action: "saveTimeSpent", data: { currentLocation: currentLocation, timeSpent: timeSpent, currentTime: currentTime }}, function(response) {
+        console.log(response, 'afg');
+    });
 }
 
 function handleHideUnhideOnClick() {
@@ -210,12 +222,13 @@ function changeThemeOnClick() {
 }
 
 function resetTimerOnClick() {
-    resetTimer()
+    resetTimer();
+    saveTimeSpent();
 }
 // functions for dragging the div.
 function handleMouseDown(event) {
     event.preventDefault();
-    isDragging = true;
+
     dragStartX = event.clientX;
     dragStartY = event.clientY;
     const { top, left } = timeTrackContainer.getBoundingClientRect();
@@ -245,3 +258,9 @@ function stopDrag() {
 }
 
 document.addEventListener("mouseup", stopDrag);
+
+window.addEventListener('beforeunload', function(event) {
+    event.preventDefault();
+    saveTimeSpent();
+    event.returnValue = '';
+});
