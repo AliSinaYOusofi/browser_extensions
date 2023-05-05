@@ -3,25 +3,30 @@
     "version": "0.0.0.1",
     "description": "record the time you spend on a website",
     "manifest_version": 3,
-
+  
     "icons": {
         "16": "./images/alarm-clock.png",
         "32": "./images/alarm-clock(1).png",
         "48": "./images/alarm-clock(2).png",
         "128": "./images/alarm-clock(3).png"
     },
-
-    "permissions": ["activeTab"],
-
+  
+    "permissions": ["activeTab", "storage"],
+  
     "content_scripts": [
         {
             "js": ["./scripts/content_script.js"],
             "matches": ["*://*/*"],
-            "resources": ["./scripts/tracker_main.html"]
+            "resources": ["./scripts/tracker_main.html"],
+            "run_at": "document_idle"
         }
     ],
-
+  
+    "background": {
+      "service_worker": "./service/background.js"
+    },
+  
     "action": {
         "default_popup": "html/popup.html"
     }
-}
+  }
