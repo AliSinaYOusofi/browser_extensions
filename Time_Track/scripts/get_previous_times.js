@@ -1,12 +1,12 @@
 chrome.storage.local.get(null, function (data) {
-    const keys = Object.keys(data);
     
-    console.log(data);
+    const keys = Object.keys(data);
     const domains = {};
 
-    keys.forEach((key, index) => {
+    keys.forEach((key) => {
+
         const website = data[key].currentLocation;
-        const domain = website.split('/')[2];
+        const domain = website?.split('/')[2];
         
         if (!domains[domain]) {
             domains[domain] = [];
@@ -24,15 +24,17 @@ chrome.storage.local.get(null, function (data) {
         
         const domainContainer = document.createElement("details");
         domainContainer.style.width = '100%'
-
         domainContainer.setAttribute("id", domain);
+        
         const domainSummary = document.createElement("summary");
         domainSummary.textContent = `${domain} ${getTotalTime(domains[domain])}`;
         domainSummary.style.fontWeight = "bold";
         domainSummary.style.minWidth     = '200px'      
+        
         const div = document.createElement("div");
 
         domains[domain].forEach(({key, website, timeSpent, currentTime}) => {
+            
             const listItem = document.createElement("div");
 
             listItem.classList.add("lists");
@@ -50,7 +52,7 @@ chrome.storage.local.get(null, function (data) {
             websiteLink.setAttribute("href", website);
             websiteLink.setAttribute("target", "_blank");
             websiteLink.setAttribute("class", 'video-link');
-            websiteLink.textContent = website.length > 40 ? website.slice(0, 40) + '...' : website;
+            websiteLink.textContent = website?.length > 40 ? website.slice(0, 40) + '...' : website;
             websiteLink.style.marginLeft = '7px';
             websiteLink.style.fontSize = '14px';
             websiteLink.style.whiteSpace = 'nowrap';
@@ -112,12 +114,15 @@ chrome.storage.local.get(null, function (data) {
 
 function getTotalTime(data) {
     const total = data.reduce((acc, curr) => {
-        const time = curr.timeSpent.split(':');
+        
+        const time = curr.timeSpent?.split(':');
+        
         let seconds = 0;
-    
-        if (time.length === 3) {
+        
+        
+        if (time?.length === 3) {
             seconds = (+time[0]) * 3600 + (+time[1]) * 60 + (+time[2]);
-        } else if (time.length === 2) {
+        } else if (time?.length === 2) {
             seconds = (+time[0]) * 60 + (+time[1]);
         }
     
@@ -129,4 +134,6 @@ function getTotalTime(data) {
     const hr = Math.floor(total / 3600);
   
     return `${hr.toString().padStart(2, '0')}:${min.toString().padStart(2, '0')}:${sec.toString().padStart(2, '0')}`;
-  }
+}
+
+
