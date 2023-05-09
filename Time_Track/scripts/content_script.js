@@ -267,7 +267,6 @@ window.addEventListener('beforeunload', function (event) {
 })
 
 setInterval( () => {
-    
 
     saveTimeSpent()
 }, 5000)

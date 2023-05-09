@@ -11,7 +11,7 @@
       "128": "./images/alarm-clock(3).png"
     },
   
-    "permissions": ["activeTab", "storage", "scripting"],
+    "permissions": ["activeTab", "storage", "scripting", "alarms", "tabs"],
   
     "content_scripts": [
       {
