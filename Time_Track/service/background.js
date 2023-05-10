@@ -1,37 +1,35 @@
- chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
+chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
 
-    if (request.action === 'saveTimeSpent') {
-        let previousDomain = request.data?.currentLocation
+  if (request.action === 'saveTimeSpent') {
+      
+    let previousDomain = request.data?.currentLocation;
+    
+    chrome.storage.local.get(null, function(data) {
+      let domainsList = { ...data };
+      
+      let currentData = {
+        timeSpent: '00:00:00',
+        currentLocation: previousDomain,
+        currentTime: request.data.currentTime
+      }
+
+      if (domainsList[previousDomain]) {
+          
+        let previousData = domainsList[previousDomain];
         
-        chrome.storage.local.get(null, function(data) {
-
-            let domainsList = { ...data };
-            
-            let currentData = {
-                timeSpent: '00:00:00',
-                currentLocation: previousDomain,
-                currentTime: request.data.currentTime
-            }
-
-            if (domainsList[previousDomain]) {
-                
-                console.log("previous domain");
-                let previousData = domainsList[previousDomain];
-                
-                let previousTimeSpentInSecs = convertTimeToSecs(previousData.timeSpent);
-                
-                let totalTimeSpentInSecs = parseInt(previousTimeSpentInSecs) + 5;
-                
-                currentData.timeSpent = convertTotalTimeSpent(totalTimeSpentInSecs);
-            }
-            domainsList[previousDomain] = currentData;
-            chrome.storage.local.set(domainsList, function() {
-                sendResponse({ success: true });
-            });
-        });
-
-        return true;
-    }
+        let previousTimeSpentInSecs = convertTimeToSecs(previousData.timeSpent);
+        
+        let totalTimeSpentInSecs = parseInt(previousTimeSpentInSecs) + 1;
+        
+        currentData.timeSpent = convertTotalTimeSpent(totalTimeSpentInSecs);
+      }
+      domainsList[previousDomain] = currentData;
+      chrome.storage.local.set(domainsList, function() {
+        sendResponse({ success: true });
+    });
+  });
+    return true;
+  }
 });
 
 function convertTimeToSecs(time) {
