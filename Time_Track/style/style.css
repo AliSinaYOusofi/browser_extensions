@@ -1,11 +1,11 @@
 body {
-    background-color: seashell;
     font-family: Arial, sans-serif;
     box-sizing: border-box;
     margin: 0;
     padding:0;
     height: fit-content;
-    width: 100%
+    width: 100%;
+
 }
 
 #containerDiv {
@@ -14,36 +14,37 @@ body {
     justify-content: center;
     align-items: center;
     padding: 10px;
-    
-    width: 100%;
+    background-color: white;
 }
 
 
 .delete_icon {
-    font-size: 1rem;
+    font-size: 0.6rem;
     width: fit-content;
     border-radius: 50%;
     cursor: pointer;
-    padding: 2px;
-    color: black;
-    width: 20px;
-    background-color: red;
+    color: white;
+    width: 15px;
+    background-color: rgb(42, 41, 41);
     border-radius: 50%;
     padding: 4px;
     color:  white;
+    margin-top: 5px;
 }
 
 
 .lists {
-    margin-top: 10px;
+    margin-top: 15px;
     display: flex;
     flex-flow: column wrap;
     justify-content: start;
     align-items: flex-start;
-    padding: 10px;
-    border-bottom:1px solid black;
-    max-width: 100%;
     overflow: hidden;
+    padding: 10px;
+    outline: none;
+    width: 100%;
+    border-radius: 10px;
+    box-shadow: rgba(0, 0, 0, 0.05) 0px 0px 0px 1px;
 }
 
 .lists p {
@@ -73,13 +74,69 @@ a {
 }
 
 details {
-    max-width: 100%;
     margin-bottom: 10px;
     cursor: pointer;
     transition: all 0.5s ease;
-    box-shadow: -1px 10px 5px 0px rgba(231,216,216,0.75);
-    -webkit-box-shadow: -1px 10px 5px 0px rgba(231,216,216,0.75);
-    -moz-box-shadow: -1px 10px 5px 0px rgba(231,216,216,0.75);
-    border-radius: 10px;
-    padding: 14px;
+    box-shadow: rgba(17, 17, 26, 0.05) 0px 4px 16px, rgba(17, 17, 26, 0.05) 0px 8px 32px;
+    padding: 20px;
+    transition: max-height 0.5s ease;
+}
+summary {
+    display: flex;
+    align-items: center;
+    position: relative;
+    padding-left: 24px; /* add padding for the width of the closed icon */
+    list-style: none;
+}
+  
+details[open] > summary::before {
+    content: "";
+    display: inline-block;
+    width: 15px;
+    height: 15px;
+    margin-right: 8px; /* add spacing between icon and text */
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center center;
+    background-image: url('data:image/svg+xml;charset=UTF-8,%3Csvg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6" %3E%3Cpath stroke-linecap="round" stroke-linejoin="round" d="M4.5 15.75l7.5-7.5 7.5 7.5" /%3E%3C/svg%3E');
+    position: absolute;
+    left: 0.5em;
+  }
+  
+details > summary::before {
+    content: "";
+    display: inline-block;
+    width: 15px;
+    height: 15px;
+    margin-right: 8px;
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center center;
+    background-image: url('data:image/svg+xml;charset=UTF-8,%3Csvg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6" %3E%3Cpath stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" /%3E%3C/svg%3E');
+    position: absolute;
+    left: 0.5em;
+}
+
+.search {
+    position: relative;
+    width: 400px;
+    margin: auto;
+    padding: 4px;
+}
+
+#search {
+    width: 100%;
+    margin-top: 5px;
+    outline: none;
+    border: 1px solid rgb(224, 216, 216);
+    padding: 10px;
+    border-radius: 4px;
+}
+
+.search_icon {
+    width: 20px;
+    position: absolute;
+    right: 0%;
+    top: 50%;
+    transform: translate(-50%, -50%);
 }

@@ -1,11 +1,15 @@
 chrome.storage.local.get(null, function (data) {
     
-    const keys = Object.keys(data);
-    const domains = {};
+    const sortedData = Object.values(data)
+        .sort((a, b) => new Date(a.currentTime).getTime() - new Date(b.currentTime).getTime())
+        .reverse();
+    
+    
+    let domains = {};
 
-    keys.forEach((key) => {
+    sortedData.forEach((item) => {
 
-        const website = data[key].currentLocation;
+        const website = item.currentLocation;
         const domain = website?.split('/')[2];
         
         if (!domains[domain]) {
@@ -13,25 +17,26 @@ chrome.storage.local.get(null, function (data) {
         }
         
         domains[domain].push({
-            key,
+            key: item.key,
             website,
-            timeSpent: data[key].timeSpent,
-            currentTime: data[key].currentTime
+            timeSpent: item.timeSpent,
+            currentTime: item.currentTime
         });
     });
 
     for (const domain in domains) {
         
         const domainContainer = document.createElement("details");
-        domainContainer.style.width = '100%'
+        
         domainContainer.setAttribute("id", domain);
         
         const domainSummary = document.createElement("summary");
-        domainSummary.textContent = `${domain} ${getTotalTime(domains[domain])}`;
+        domainSummary.textContent = `${domain}  ${getTotalTime(domains[domain])}`;
         domainSummary.style.fontWeight = "bold";
-        domainSummary.style.minWidth     = '200px'      
+        domainSummary.style.minWidth     = '400px'     
         
         const div = document.createElement("div");
+        div.style.marginLeft = '20px'
 
         domains[domain].forEach(({key, website, timeSpent, currentTime}) => {
             
@@ -99,8 +104,10 @@ chrome.storage.local.get(null, function (data) {
             listItem.appendChild(time);
             listItem.appendChild(spentTimeAt);
             
+            
             // append div to containerDiv
             div.appendChild(listItem);
+            div.style.width = '350px'
         });
 
         // append list items to domain container
@@ -136,4 +143,21 @@ function getTotalTime(data) {
     return `${hr.toString().padStart(2, '0')}:${min.toString().padStart(2, '0')}:${sec.toString().padStart(2, '0')}`;
 }
 
+let searchInput = document.getElementById("search");
 
+searchInput.addEventListener("input", event => {
+
+    let searchTerm = event.target.value.toLowerCase();
+    let listItems = document.getElementsByClassName("lists");
+
+    for (let i = 0; i < listItems.length; i++) {
+        let domainContainer = listItems[i].closest("details");
+        let domainName = domainContainer.getAttribute("id").toLowerCase();
+
+        if (domainName.includes(searchTerm)) {
+            domainContainer.style.display = "";
+        } else {
+            domainContainer.style.display = "none";
+        }
+    }
+});

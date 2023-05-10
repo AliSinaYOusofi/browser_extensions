@@ -1,14 +1,14 @@
 {
-    "name": "timeTrack",
+    "name": "TimeTrack",
     "version": "0.0.0.1",
-    "description": "record the time you spend on a website",
+    "description": "Record the amount of time you spend on a website.",
     "manifest_version": 3,
   
     "icons": {
-      "16": "./images/alarm-clock.png",
-      "32": "./images/alarm-clock(1).png",
-      "48": "./images/alarm-clock(2).png",
-      "128": "./images/alarm-clock(3).png"
+      "16": "./images/icons8-clock-16.png",
+      "32": "./images/icons8-clock-32.png",
+      "48": "./images/icons8-clock-48.png",
+      "128": "./images/icons8-clock-128.png"
     },
   
     "permissions": ["activeTab", "storage", "scripting", "alarms", "tabs"],

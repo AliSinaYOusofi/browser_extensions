@@ -99,7 +99,6 @@ function updateTimeDisplay(timeSpent) {
         line-height: 1;
         white-space: nowrap;
         width: fit-content;
-        height: 100ppx;
         cursor: grab;
         display: flex;
         flex-flow: column wrap;
@@ -123,7 +122,6 @@ function updateTimeDisplay(timeSpent) {
     .light {
         background: white;
         color: black;
-        opacity: 1;
     }
       
     .dark {
@@ -267,6 +265,5 @@ window.addEventListener('beforeunload', function (event) {
 })
 
 setInterval( () => {
-
     saveTimeSpent()
-}, 5000)
+}, 1000)
