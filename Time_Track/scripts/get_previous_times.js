@@ -38,12 +38,12 @@ chrome.storage.local.get(null, function (data) {
         const div = document.createElement("div");
         div.style.marginLeft = '20px'
 
-        domains[domain].forEach(({key, website, timeSpent, currentTime}) => {
+        domains[domain].forEach(({website, timeSpent, currentTime}) => {
             
             const listItem = document.createElement("div");
 
             listItem.classList.add("lists");
-            listItem.setAttribute("id", key);
+            listItem.setAttribute("id", website);
             listItem.style.display = 'flex';
             listItem.style.justifyContent = 'space-between'; // center horizontally
 
@@ -84,7 +84,7 @@ chrome.storage.local.get(null, function (data) {
 
             // add click event to icon element to delete the li
             icon.addEventListener("click", function() {
-                chrome.storage.local.remove(key, function() {
+                chrome.storage.local.remove(website, function() {
                     listItem.remove();
                     
                     if (domains[domain].length === 0) {

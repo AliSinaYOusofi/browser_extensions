@@ -68,7 +68,6 @@ function resetTimer() {
 
 }
 
-
 function handleLocationChange() {
     
     if (window.location.href !== currentLocation) {
@@ -173,12 +172,12 @@ function updateTimeDisplay(timeSpent) {
 }
 
 function saveTimeSpent() {
-
+    
     let timeSpent = timeTrackText.textContent;
     let currentTime = new Date().toLocaleString();
-
-    chrome.runtime.sendMessage({ action: "saveTimeSpent", data: { currentLocation: currentLocation, timeSpent: timeSpent, currentTime: currentTime }}, function(response) {
-        console.log(response, 'afg');
+    
+    chrome.runtime.sendMessage({ action: "saveTimeSpent", data: { timeSpent: timeSpent, currentTime: currentTime }}, function(response) {
+      console.log(response, 'afg');
     });
 }
 
@@ -259,9 +258,12 @@ function stopDrag() {
 
 document.addEventListener("mouseup", stopDrag);
 
-window.addEventListener('beforeunload', function (event) {
-    event.preventDefault();
-    saveTimeSpent();
+function startTimer() {
+    timerInterval = setInterval(incrementTime, 1000);
+}
+
+window.addEventListener("focus", () => {
+    startTimer();
 })
 
 setInterval( () => {
